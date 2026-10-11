@@ -1,4 +1,4 @@
-"""Spectral indices for multispectral (Sentinel-2) and hyperspectral (Tanager /
+"""Spectral indices for multispectral (Sentinel-2) and hyperspectral (EMIT, Tanager /
 Satellite 813) data.
 
 Every index here is an *indicator*, not a direct measurement. The docstrings

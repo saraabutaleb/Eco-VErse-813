@@ -25,7 +25,8 @@ DOCS_DIR = REPO_ROOT / "docs"
 
 STACK_TIF = SAMPLE_DIR / "bahrain_aoi_stack.tif"          # multi-layer 20 m input
 STACK_META = SAMPLE_DIR / "bahrain_aoi_stack_metadata.json"
-TANAGER_DIR = SAMPLE_DIR / "tanager_gulf"                  # hyperspectral subsets
+TANAGER_DIR = SAMPLE_DIR / "tanager_gulf"                  # (not used: earlier Gulf-analogue approach)
+EMIT_DIR = SAMPLE_DIR / "emit_bahrain"                     # NASA EMIT hyperspectral subset over the AOI
 
 RANDOM_SEED = 813
 
@@ -76,6 +77,9 @@ TANAGER_SCENES = [
      "label": "Rub al Khali margin (desert sand)"},
 ]
 GULF_SEARCH_BBOX = (45.0, 22.0, 57.0, 28.5)  # used to auto-discover more scenes
+
+# NASA EMIT search window (EMIT has imaged Bahrain since August 2022)
+EMIT_TEMPORAL = ("2022-08-01", "2026-09-30")
 
 # ----------------------------------------------------------------------------
 # Agronomic constants

@@ -13,8 +13,8 @@ a field-probe route that targets the places where the satellite estimate is leas
 ---
 
 ## 1. Title and one-line summary
-See above. The PoC runs on open data only (Sentinel-2, Landsat, Copernicus DEM, ESA WorldCover, Planet Tanager open
-archive) and is built so that **Satellite 813** hyperspectral data drops in during incubation.
+See above. The PoC runs on open data only, all over Bahrain (Sentinel-2, Landsat, Copernicus DEM, ESA WorldCover and NASA EMIT
+hyperspectral), and is built so that **Satellite 813** hyperspectral data drops in during incubation.
 
 ## 2. The business use case
 | | |
@@ -43,11 +43,11 @@ bands cannot resolve — which is exactly what Satellite 813 provides.
 | Landsat 8/9 Collection 2 L2, `lwir11` + `QA_PIXEL` | USGS via Planetary Computer (`landsat-c2-l2`) | Summer 2025; cloud < 30 % | Surface temperature (scale 0.00341802, offset 149 K), QA-masked median | Public domain |
 | Copernicus DEM GLO-30 | ESA / Airbus via Planetary Computer (`cop-dem-glo-30`) | 2021 release | 30 m DSM, resampled to 20 m | Copernicus DEM licence |
 | ESA WorldCover | ESA via Planetary Computer (`esa-worldcover`) | 2021 (v200) | 10 m land cover, mode-resampled | CC BY 4.0 |
-| Planet Tanager hyperspectral (open archive) | Planet open STAC: `coastal-water-bodies/20250511_074311_00_4001` (Abu Dhabi Al Dhafra coast), `urban/20250515_080954_16_4001` (Riyadh), `natural-lands/20250608_074757_58_4001` (Rub al Khali margin) | 2025-05 to 2025-06 | Surface-reflectance HDF5, 426 bands 380–2500 nm; water-vapour and > 2450 nm bands removed | Planet open data (CC BY 4.0) |
+| NASA EMIT L2A surface reflectance (`EMITL2ARFL`, V002) | NASA JPL / LP DAAC via NASA Earthdata (`earthaccess`); granule `EMIT_L2A_RFL_002_20230617T111139` | 2023-06-17 (0 % cloud over the AOI) | L2A surface reflectance, 285 bands 381–2493 nm, 60 m; water-vapour and > 2450 nm bands removed (237 used); window cut to the AOI | NASA open data, no restrictions |
 | Plant trait table (26 species) | FAO, ICBA Biosaline, peer-reviewed salinity trials, Gulf floras — one source URL per row in `data/plants/bahrain_plant_traits.csv` | — | Curated; `salinity_basis` F = from source, F/E = converted, E = expert estimate | Facts cited with attribution |
 
 Exact AOI, dates and limits are in [`src/ecoverse/config.py`](src/ecoverse/config.py); every STAC item ID actually used is
-recorded in `data/sample_input/bahrain_aoi_stack_metadata.json` and `data/sample_input/tanager_gulf/*_meta.json`.
+recorded in `data/sample_input/bahrain_aoi_stack_metadata.json` and `data/sample_input/emit_bahrain/*_meta.json`.
 
 **AOI:** lon 50.50–50.64 E, lat 26.12–26.24 N (≈ 14 × 13 km): Manama, Tubli Bay mangroves, Isa Town, Sitra — a deliberate
 gradient from intertidal flats to dense urban fabric to irrigated date-palm belts.
@@ -60,11 +60,13 @@ open data ─► hyperspectral bridge ─► fingerprint ─► survival model �
 ```
 1. **Compositing** (`fetch.py`): SCL/QA-masked medians for summer and winter; *summer-green persistence* = share of clear
    summer dates with NDVI > 0.25 (Bahrain gets ~no summer rain, so persistent green that is not tidal is irrigated or groundwater-fed).
-2. **Hyperspectral bridge** (`hyperspectral.py`, notebook 01): on Tanager Gulf scenes compute continuum-removed absorption
-   depths — gypsum 1750 nm, clay 2200 nm, carbonate 2340 nm, canopy water 1200 nm — and red-edge position; simulate Sentinel-2
-   with Gaussian spectral responses; train gradient-boosted S2 → feature models with **5-fold spatially-blocked CV**
-   (32 × 32 px blocks). Only features with CV R² ≥ 0.4 are transferred to Bahrain; the rest quantify what Satellite 813 adds.
-   Also: cluster bare-ground pixels on these absorption depths and measure how well Sentinel-2 can recover those classes.
+2. **Hyperspectral over Bahrain** (`emit.py`, `hyperspectral.py`, notebook 01): from the NASA EMIT scene of the same AOI compute
+   continuum-removed absorption depths — gypsum 1750 nm, clay 2200 nm, carbonate 2340 nm, liquid water 1200 nm — and red-edge
+   position; resample them to the 20 m grid (nearest neighbour, ≤ 45 m). The **gypsum depth goes directly into the salinity layer**.
+   Simulate Sentinel-2 from the EMIT spectra and train gradient-boosted S2 → feature models with **5-fold spatially-blocked CV**
+   (32 × 32 px blocks ≈ 1.9 km); the unexplained share of each feature is what only a hyperspectral sensor (Satellite 813) sees.
+   The few grid cells EMIT does not cover are filled from that model only if its CV R² ≥ 0.4. Also: cluster bare-ground pixels on
+   the absorption depths and measure how well Sentinel-2 can recover those soil classes.
 3. **Fingerprint** (`fingerprint.py`): NDVI, NDRE, NDMI, MNDWI, NDBI, salinity indices SI = √(B·R), SI2, SWIR ratio;
    distance to sea; intertidal mask; **salinity pressure** (spectral salinity + mineral proxy on bare ground, low elevation,
    coastal proximity) mapped log-linearly to an ECe prior of 3–50 dS/m with per-pixel uncertainty; waterlogging risk;
@@ -89,31 +91,34 @@ cd Eco-verse-813
 python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
-No API keys or tokens are needed — every data source is open.
+No keys are needed to reproduce the results from the committed sample data. Re-downloading the NASA EMIT scene needs a free
+NASA Earthdata account: set `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` as environment variables (never commit them).
 
 ## 7. How to run
 **Reproduce the headline result from the committed sample data (offline, ≈ 3 min, no GPU):**
 ```bash
 jupyter lab notebooks/02_main_analysis.ipynb      # Run All
 ```
-It reads `data/sample_input/bahrain_aoi_stack.tif` (+ `tanager_gulf/`) and writes figures, GeoTIFFs and CSVs to `results/`.
-The hyperspectral analysis is `notebooks/01_hyperspectral_gulf_calibration.ipynb` (≈ 1 min).
+It reads `data/sample_input/bahrain_aoi_stack.tif` and `data/sample_input/emit_bahrain/`, and writes figures, GeoTIFFs and CSVs to `results/`.
+The hyperspectral analysis of Bahrain is `notebooks/01_hyperspectral_bahrain_emit.ipynb` (≈ 1 min).
 
-**Re-run everything from scratch** (downloads data, ≈ 15–30 min, most of it two Tanager HDF5 files of 1–5 GB each):
+**Re-run everything from scratch** (downloads data, ≈ 15–20 min; the EMIT scene is ≈ 2 GB before it is cut to the AOI):
 ```bash
-python scripts/fetch_data.py          # writes data/sample_input/ (add --skip-tanager for a 5-min run)
+export EARTHDATA_USERNAME=... EARTHDATA_PASSWORD=...   # free NASA Earthdata account, for EMIT only
+python scripts/fetch_data.py          # writes data/sample_input/ (add --skip-emit for a 5-min run without EMIT)
 python scripts/run_all.py             # executes notebooks 01 and 02, builds docs/slides.pdf, refreshes this README's results
 pytest -q                             # offline unit tests on synthetic fixtures
 ```
 Or open [`notebooks/00_run_everything_colab.ipynb`](notebooks/00_run_everything_colab.ipynb) in Google Colab.
 
-**What to edit:** AOI, dates, cloud limits, Tanager scene IDs → `src/ecoverse/config.py`; species and tolerances →
+**What to edit:** AOI, dates, cloud limits, EMIT search window → `src/ecoverse/config.py`; species and tolerances →
 `data/plants/bahrain_plant_traits.csv`; field readings → copy `data/ground/ground_readings_TEMPLATE.csv` to
 `data/ground/ground_readings.csv`.
 
 ## 8. Example input and output
 - **Input:** `data/sample_input/bahrain_aoi_stack.tif` — 17-layer, 20 m, int16 GeoTIFF clipped to the AOI (layer names and scale factors in the tags);
-  `data/sample_input/tanager_gulf/` — compact Tanager subsets (pixel sample with PCA spectra, thinned feature maps, metadata).
+  `data/sample_input/emit_bahrain/` — NASA EMIT window over the AOI (absorption-depth features, simulated Sentinel-2 bands,
+  20 PCA scores of the full spectrum per pixel, metadata).
 - **Outputs (results/):** `recommended_species.tif`, `fingerprint_and_scores.tif` (ECe, LST, waterlogging, persistence,
   urban density, water need, saving, stability), `species_summary.csv`, `guilds.csv`, `water_budget.csv`, `probe_plan.csv`,
   `validation.csv`, `hyperspectral_transfer_cv.csv`, `headline.json`, and the figures below.
@@ -136,7 +141,7 @@ _Auto-generated by `scripts/update_readme.py` from `results/headline.json` (do n
 | Land with ≥1 native survivor (no routine irrigation) | 100.0 % |
 | Mean irrigation saving vs. Conocarpus + lawn | 1285 mm/yr (90 % MC interval 1249–1432) |
 | Median recommendation stability (Monte Carlo) | 0.93 |
-| Land keeping the same pick in ≥80 % of draws | 87.8 % |
+| Land keeping the same pick in ≥80 % of draws | 87.9 % |
 | Probe sites planned | 12 |
 
 **Water budget**
@@ -145,29 +150,29 @@ _Auto-generated by `scripts/update_readme.py` from `results/headline.json` (do n
 |---|---|---|---|---|
 | Urban irrigated greenery (replace) | 851 | 12,595,984 | 1,596,868 | 87 % |
 | All irrigated greenery incl. farms | 1,108 | 16,395,440 | 2,128,610 | 87 % |
-| All evaluated land (green from scratch) | 14,950 | 221,266,512 | 29,206,714 | 87 % |
+| All evaluated land (green from scratch) | 14,952 | 221,283,088 | 29,227,396 | 87 % |
 
 **Most-recommended native species (share of land)**
 
-1. Arak / Toothbrush tree — 96.8 %
-2. Ghaf — 78.2 %
-3. Rimth — 45.2 %
-4. Harm / Qatar bean caper — 33.4 %
-5. Sea lavender — 14.1 %
+1. Arak / Toothbrush tree — 96.9 %
+2. Ghaf — 77.4 %
+3. Rimth — 44.3 %
+4. Harm / Qatar bean caper — 34.3 %
+5. Sea lavender — 14.4 %
 
 **Hyperspectral → Sentinel-2 transfer (spatial-block CV)**
 
 | Hyperspectral feature | Pixels | n | Linear R² | Boosted R² | Info only hyperspectral sees |
 |---|---|---|---|---|---|
-| GYPSUM_1750 | soil | 30,872 | 0.51 | 0.62 | 38 % |
-| CLAY_2200 | soil | 30,872 | 0.76 | 0.89 | 11 % |
-| CARBONATE_2340 | soil | 30,872 | 0.78 | 0.94 | 6 % |
-| REP | veg | 276 | 0.88 | 0.50 | 50 % |
-| CANOPY_WATER_1200 | veg | 276 | 0.90 | 0.81 | 19 % |
+| GYPSUM_1750 | soil | 35,175 | 0.24 | 0.43 | 57 % |
+| CLAY_2200 | soil | 35,175 | 0.17 | 0.27 | 73 % |
+| CARBONATE_2340 | soil | 35,175 | 0.15 | 0.39 | 61 % |
+| REP | veg | 1,128 | 0.85 | 0.65 | 35 % |
+| CANOPY_WATER_1200 | veg | 1,128 | 0.88 | 0.85 | 15 % |
 
-Gypsum signal transferred into the Bahrain salinity layer: **True**
+EMIT gypsum depth (1750 nm) used in the Bahrain salinity layer: **True** (NASA EMIT EMIT_L2A_RFL_002_20230617T111139 (2023-06-17))
 
-Sentinel-2 recovers the 6 hyperspectral soil classes with balanced accuracy **0.82** (chance 0.17).
+Sentinel-2 recovers the 6 hyperspectral soil classes with balanced accuracy **0.58** (chance 0.17).
 
 **Validation checks**
 
@@ -176,6 +181,9 @@ Sentinel-2 recovers the 6 hyperspectral soil classes with balanced accuracy **0.
 - Spearman rho, summer NDVI vs LST (expect < 0): **-0.07**
 - Conocarpus survives without routine irrigation in dense urban pixels (%): **0.00**
 - Pixels with ≥1 surviving native species (%): **99.99**
+- EMIT coverage of the AOI grid (%): **95.68**
+- EMIT vs Sentinel-2 red reflectance, Pearson r (co-registration check): **0.80**
+- EMIT vs Sentinel-2 NIR reflectance, Pearson r (co-registration check): **0.89**
 
 <!-- RESULTS:END -->
 
@@ -186,6 +194,13 @@ negatively correlated); (iii) **Monte Carlo stability**; (iv) for the hyperspect
 so neighbouring pixels never leak across folds. For external context: a Qatar GORD project reported native landscapes using
 roughly 70 % less irrigation than standard park ornamentals (non-peer-reviewed) — our modelled savings should be read against that.
 
+**Reading the validation checks honestly.** The Conocarpus result (0 %) follows directly from its low drought-tolerance
+rating in the trait table, so it is a consistency check, not independent evidence. The summer NDVI–LST correlation is
+negative as expected but weak (ρ ≈ −0.07), because Landsat surface temperature is 100 m data resampled to 20 m. The
+water savings are modelled from WUCOLS-style plant factors and ET0, not metered. All data, including the hyperspectral
+data (NASA EMIT, 17 June 2023), covers the same Bahrain AOI. EMIT and Sentinel-2 agree well where they overlap (red r ≈ 0.80,
+NIR r ≈ 0.89), which confirms the two are correctly co-registered.
+
 **Where it breaks.**
 - Salinity is a *satellite prior* anchored to FAO ranges, not a measurement; it is weakest under vegetation and buildings
   (uncertainty is mapped and propagated). Ground probes are designed in to fix this.
@@ -193,10 +208,10 @@ roughly 70 % less irrigation than standard park ornamentals (non-peer-reviewed) 
   comfort limits are conservative. A Gulf horticulturist must review the table before operational use.
 - pH and nutrients cannot be seen from orbit — a regional calcareous prior (pH 8.1 ± 0.35) is used until probed.
 - 20 m pixels mix roads, roofs and verges; recommendations describe the typical planting condition of the patch.
-- Hyperspectral calibration uses Gulf analogue scenes (Abu Dhabi coast, Riyadh, Rub al Khali), not Bahrain, and Tanager-simulated
-  Sentinel-2 differs from real L2A reflectance. The vegetation targets (red edge, canopy water) rest on only 276 vegetated
-  pixels, so those R² values are indicative only; the soil targets use about 31,000 pixels.
-- The Al Dhafra (Abu Dhabi) scene was mostly cloud and sea (about 1 % usable land), so the coastal-sabkha analogue is thin.
+- Hyperspectral data is a single EMIT date (17 June 2023) at 60 m, while Sentinel-2/Landsat are summer 2025 at 20 m; soil
+  mineralogy changes slowly, but construction since 2023 is not reflected in the gypsum layer. The S2 → feature models use
+  Sentinel-2 bands simulated from EMIT, not co-incident real Sentinel-2. The vegetation targets rest on 1,128 vegetated pixels
+  and the soil targets on 35,175.
 - Water savings assume established plants and WUCOLS-style plant factors; establishment-year irrigation is extra.
 - Irrigated-greenery detection includes date-palm farms; the urban replacement scenario excludes them using urban density.
 
@@ -210,8 +225,9 @@ More: [`docs/concept_review.md`](docs/concept_review.md) — idea refinement, we
 
 - **Code:** MIT licence (see `LICENSE`).
 - **Data:** Copernicus Sentinel-2 data (ESA) and Copernicus DEM; Landsat courtesy of USGS; ESA WorldCover 2021 (CC BY 4.0);
-  Planet Tanager open data (CC BY 4.0, © Planet Labs); accessed through Microsoft Planetary Computer and Planet's open STAC catalogue.
+  NASA EMIT L2A reflectance (NASA JPL, distributed by LP DAAC; no restrictions); accessed through Microsoft Planetary Computer
+  and NASA Earthdata.
 - **Built on:** the hackathon starter notebooks ([813-hyperspectral-hackathon](https://github.com/Tnecniv-Teikram/813-hyperspectral-hackathon)) for
-  Tanager HDF5 structure, quality masks and band screening; odc-stac, rasterio, scikit-learn.
+  hyperspectral band screening and index conventions; earthaccess, odc-stac, rasterio, scikit-learn.
 - **Plant knowledge:** FAO salt-tolerance tables, ICBA *Salt Tolerant Plants of the UAE*, UAE Flora, Qatar e-Nature and the
   peer-reviewed trials cited per species in the trait table.

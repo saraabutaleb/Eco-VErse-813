@@ -1,0 +1,42 @@
+{
+  "granule": "EMIT_L2A_RFL_002_20230617T111139",
+  "sensor": "NASA EMIT (ISS)",
+  "product": "EMIT L2A surface reflectance (EMITL2ARFL)",
+  "window_shape": [
+    351,
+    276
+  ],
+  "n_bands_total": 285,
+  "n_bands_used": 237,
+  "aoi_valid_pct": 100.0,
+  "pixel_size_m": 60,
+  "pca_explained_var": [
+    0.9851800203323364,
+    0.008589999750256538,
+    0.004279999993741512,
+    0.0009399999980814755,
+    0.00031999999191612005,
+    0.00022000000171829015,
+    0.00014000000373926014,
+    7.000000186963007e-05,
+    4.999999873689376e-05,
+    3.9999998989515007e-05,
+    2.9999999242136255e-05,
+    1.9999999494757503e-05,
+    1.9999999494757503e-05,
+    1.9999999494757503e-05,
+    9.999999747378752e-06,
+    9.999999747378752e-06,
+    9.999999747378752e-06,
+    9.999999747378752e-06,
+    9.999999747378752e-06,
+    0.0
+  ],
+  "licence": "NASA EMIT data: free and open, no restrictions (cite LP DAAC / NASA JPL)",
+  "datetime": "2023-06-17T11:11:39Z",
+  "scene_cloud_pct": 0.0,
+  "source_files": [
+    "EMIT_L2A_RFL_002_20230617T111139.nc"
+  ],
+  "repo_subset_note": "pixels more than ~500 m outside the AOI dropped; layers stored as float16 (red-edge position float32) to keep the repository small"
+}

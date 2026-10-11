@@ -174,7 +174,8 @@ def s2_feature_frame(df: pd.DataFrame) -> pd.DataFrame:
 def _subset(df, target):
     ndvi = nd(df["B8A"], df["B04"])
     sel = np.isfinite(df[target]) & np.isfinite(df[S2_NAMES]).all(axis=1)
-    sel &= (ndvi < 0.2) if TARGETS[target] == "soil" else (ndvi >= 0.3)
+    land = nd(df["B03"], df["B11"]) < 0.0          # exclude open water (MNDWI)
+    sel &= land & ((ndvi < 0.2) if TARGETS[target] == "soil" else (ndvi >= 0.3))
     return df[sel]
 
 
@@ -232,7 +233,7 @@ def soil_class_recovery(df: pd.DataFrame, k: int = 6, n_splits: int = 5, seed: i
     """
     ndvi = nd(df["B8A"], df["B04"])
     feats = ["GYPSUM_1750", "CLAY_2200", "CARBONATE_2340", "CANOPY_WATER_1200"]
-    d = df[(ndvi < 0.2)].dropna(subset=S2_NAMES + feats)
+    d = df[(ndvi < 0.2) & (nd(df["B03"], df["B11"]) < 0.0)].dropna(subset=S2_NAMES + feats)
     # Narrow-band absorption depths are physically comparable across scenes
     # (PCA scores are not: each scene has its own PCA basis).
     Z = d[feats].to_numpy()

@@ -4,33 +4,33 @@
   "irrigated_greenery_ha": 1107.8,
   "n_species": 26,
   "n_native": 21,
-  "pct_land_with_native_survivor": 99.98662425664307,
+  "pct_land_with_native_survivor": 99.99411467292295,
   "top_species": [
     [
       "Arak / Toothbrush tree",
-      96.8
+      96.9
     ],
     [
       "Ghaf",
-      78.2
+      77.4
     ],
     [
       "Rimth",
-      45.2
+      44.3
     ],
     [
       "Harm / Qatar bean caper",
-      33.4
+      34.3
     ],
     [
       "Sea lavender",
-      14.1
+      14.4
     ]
   ],
-  "mean_saving_mm": 1284.6431884765625,
+  "mean_saving_mm": 1284.519287109375,
   "saving_mm_ci90": [
-    1249.1284973144532,
-    1431.7033081054688
+    1248.961004638672,
+    1431.5101745605468
   ],
   "water_budget": [
     {
@@ -51,70 +51,74 @@
     },
     {
       "scenario": "All evaluated land (green from scratch)",
-      "area_ha": 14950.4,
-      "baseline_m3_yr": 221266512.0,
-      "ecoverse_m3_yr": 29206714.0,
-      "saving_m3_yr": 192059800.0,
+      "area_ha": 14951.6,
+      "baseline_m3_yr": 221283088.0,
+      "ecoverse_m3_yr": 29227396.0,
+      "saving_m3_yr": 192055692.0,
       "saving_pct": 86.8
     }
   ],
   "median_stability": 0.925000011920929,
-  "pct_stable_80": 87.7611948284026,
+  "pct_stable_80": 87.85321994269832,
   "validation": {
     "WorldCover mangrove pixels where grey mangrove survives (%)": 100.0,
     "Inland (>1 km from sea) pixels where grey mangrove is recommended (%)": 0.0,
     "Spearman rho, summer NDVI vs LST (expect < 0)": -0.07227253349960226,
     "Conocarpus survives without routine irrigation in dense urban pixels (%)": 0.0,
-    "Pixels with \u22651 surviving native species (%)": 99.98662425664307
+    "Pixels with \u22651 surviving native species (%)": 99.99411467292295,
+    "EMIT coverage of the AOI grid (%)": 95.68053810932372,
+    "EMIT vs Sentinel-2 red reflectance, Pearson r (co-registration check)": 0.800621657904884,
+    "EMIT vs Sentinel-2 NIR reflectance, Pearson r (co-registration check)": 0.8886566426232587
   },
   "transfer_cv": [
     {
       "target": "GYPSUM_1750",
       "pixels": "soil",
-      "n": 30872,
-      "r2_linear": 0.507,
-      "r2_boosted": 0.625,
-      "mae_boosted": 0.005,
-      "hyperspectral_only_info_pct": 37.51
+      "n": 35175,
+      "r2_linear": 0.236,
+      "r2_boosted": 0.433,
+      "mae_boosted": 0.007,
+      "hyperspectral_only_info_pct": 56.651
     },
     {
       "target": "CLAY_2200",
       "pixels": "soil",
-      "n": 30872,
-      "r2_linear": 0.756,
-      "r2_boosted": 0.892,
-      "mae_boosted": 0.007,
-      "hyperspectral_only_info_pct": 10.831
+      "n": 35175,
+      "r2_linear": 0.168,
+      "r2_boosted": 0.268,
+      "mae_boosted": 0.008,
+      "hyperspectral_only_info_pct": 73.159
     },
     {
       "target": "CARBONATE_2340",
       "pixels": "soil",
-      "n": 30872,
-      "r2_linear": 0.779,
-      "r2_boosted": 0.944,
-      "mae_boosted": 0.016,
-      "hyperspectral_only_info_pct": 5.596
+      "n": 35175,
+      "r2_linear": 0.149,
+      "r2_boosted": 0.386,
+      "mae_boosted": 0.01,
+      "hyperspectral_only_info_pct": 61.378
     },
     {
       "target": "REP",
       "pixels": "veg",
-      "n": 276,
-      "r2_linear": 0.882,
-      "r2_boosted": 0.5,
-      "mae_boosted": 0.667,
-      "hyperspectral_only_info_pct": 50.033
+      "n": 1128,
+      "r2_linear": 0.846,
+      "r2_boosted": 0.647,
+      "mae_boosted": 0.572,
+      "hyperspectral_only_info_pct": 35.288
     },
     {
       "target": "CANOPY_WATER_1200",
       "pixels": "veg",
-      "n": 276,
-      "r2_linear": 0.902,
-      "r2_boosted": 0.811,
-      "mae_boosted": 0.007,
-      "hyperspectral_only_info_pct": 18.865
+      "n": 1128,
+      "r2_linear": 0.877,
+      "r2_boosted": 0.853,
+      "mae_boosted": 0.008,
+      "hyperspectral_only_info_pct": 14.697
     }
   ],
   "gypsum_transferred": true,
+  "hs_source": "NASA EMIT EMIT_L2A_RFL_002_20230617T111139 (2023-06-17)",
   "n_probe_sites": 12,
   "data_period_summer": "2025-06-01/2025-08-31",
   "n_s2_scenes_summer": 42

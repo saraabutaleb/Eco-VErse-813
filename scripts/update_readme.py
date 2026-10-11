@@ -41,7 +41,7 @@ def block(hl):
             if "r2_boosted" in r and r["r2_boosted"] == r["r2_boosted"]:
                 lines.append(f"| {r['target']} | {r.get('pixels','')} | {r['n']:,} | {r['r2_linear']:.2f} | {r['r2_boosted']:.2f} | "
                              f"{r['hyperspectral_only_info_pct']:.0f} % |")
-        lines.append(f"\nGypsum signal transferred into the Bahrain salinity layer: **{hl['gypsum_transferred']}**")
+        lines.append(f"\nEMIT gypsum depth (1750 nm) used in the Bahrain salinity layer: **{hl['gypsum_transferred']}** ({hl.get('hs_source')})")
     soil = config.RESULTS_DIR / "hyperspectral_soil_recovery.json"
     if soil.exists():
         s = json.loads(soil.read_text())

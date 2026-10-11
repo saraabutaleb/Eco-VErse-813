@@ -27,10 +27,10 @@ def execute(nb_name, timeout=1800):
 
 def main():
     config.RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    if any(config.TANAGER_DIR.glob("*_meta.json")):
-        execute("01_hyperspectral_gulf_calibration.ipynb")
+    if any(config.EMIT_DIR.glob("*_meta.json")):
+        execute("01_hyperspectral_bahrain_emit.ipynb")
     else:
-        print("No Tanager subsets found - skipping notebook 01 (run scripts/fetch_data.py)")
+        print("No EMIT subset found - skipping notebook 01 (run scripts/fetch_data.py --only-emit)")
     execute("02_main_analysis.ipynb")
     subprocess.run([sys.executable, str(ROOT / "scripts" / "make_slides.py")], check=True)
     subprocess.run([sys.executable, str(ROOT / "scripts" / "update_readme.py")], check=True)

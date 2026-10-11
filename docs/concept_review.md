@@ -12,7 +12,7 @@ comes in.
 ## What changed from the original pitch (and why)
 | Original | Refined | Reason |
 |---|---|---|
-| "Use Satellite 813 data" | Open data now; Tanager Gulf scenes as a **hyperspectral bridge**; Satellite 813 slots in during incubation | Satellite 813 is not guaranteed in the PoC phase — a PoC built on it would not run. |
+| "Use Satellite 813 data" | Open data now, all over Bahrain, including **NASA EMIT hyperspectral**; Satellite 813 slots in during incubation | Satellite 813 is not guaranteed in the PoC phase — a PoC built on it would not run. |
 | Ground sensors everywhere | Satellite first, **probes only where uncertainty changes the decision** | Makes it affordable and scalable for a two-person team. |
 | Single best plant | **Guild** (canopy + shrub + groundcover) | A real planting needs layers; it also lets salt-tolerant groundcovers work where trees cannot. |
 | "Environmental fingerprint" as a concept | Six concrete, mapped layers + **habitat archetypes** | Judges and planners need to see what it is. |
@@ -20,7 +20,7 @@ comes in.
 
 ## Weaknesses to be ready for (and our answers)
 1. **"Salinity from space is unreliable."** True under vegetation and buildings. We map the uncertainty, propagate it
-   (Monte Carlo) and use it to place probes. The hyperspectral bridge measures how much better a hyperspectral sensor does.
+   (Monte Carlo) and use it to place probes. The EMIT analysis measures how much better a hyperspectral sensor does than Sentinel-2.
 2. **"Your plant tolerances are guesses."** Each row cites a source; estimated values are flagged `E`. A horticulturist
    review is the first incubation task.
 3. **"20 m is too coarse for a tree pit."** The product is a planning screen (which species palette fits this street /

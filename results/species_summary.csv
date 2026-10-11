@@ -1,25 +1,25 @@
 species_id,scientific_name,common_name,layer,comparison,plant_factor,survives_pct_area,recommended_pct_area,main_limit_where_fails
-arak,Salvadora persica,Arak / Toothbrush tree,shrub,False,0.1,96.80747757556627,96.80747757556627,salinity
-ghaf,Prosopis cineraria,Ghaf,canopy,False,0.1,81.1129153502706,78.17212441581441,waterlog
-rimth,Haloxylon salicornicum,Rimth,ground,False,0.1,81.56983074334356,45.1605222960266,waterlog
-harm,Tetraena qatarensis,Harm / Qatar bean caper,ground,False,0.1,93.80114549866109,33.448453897825374,salinity
-sea_lavender,Limonium axillare,Sea lavender,ground,False,0.1,95.95972296160359,14.053358515399493,salinity
-athel,Tamarix aphylla,Athel tamarisk,canopy,False,0.2,26.808199865707536,10.46250645379617,infrastructure
-glasswort,Arthrocnemum macrostachyum,Glasswort,ground,False,0.2,11.300898047408985,5.664627311662846,habitat
-qurm,Avicennia marina,Grey mangrove / Qurm,canopy,False,0.0,3.0017843241638156,3.0017843241638156,habitat
-suwwad,Suaeda vermiculata,Seablite / Suwwad,ground,False,0.2,96.70020411384363,1.1685049396620217,salinity
-ikrish,Aeluropus lagopoides,Ikrish / Mangrove grass,ground,False,0.2,96.83690421095153,0.4911572960667289,salinity
-sidr,Ziziphus spina-christi,Sidr / Christ's thorn,canopy,False,0.2,14.229918327711063,0.0,salinity
-samr,Vachellia tortilis,Umbrella thorn / Samr,canopy,False,0.1,72.06663260310692,0.0,salinity
+arak,Salvadora persica,Arak / Toothbrush tree,shrub,False,0.1,96.86419072739967,96.86419072739967,salinity
+ghaf,Prosopis cineraria,Ghaf,canopy,False,0.1,80.8809799604613,77.43565598658145,waterlog
+rimth,Haloxylon salicornicum,Rimth,ground,False,0.1,81.25416320011985,44.3098250185254,waterlog
+harm,Tetraena qatarensis,Harm / Qatar bean caper,ground,False,0.1,93.76128578345741,34.30797916594215,salinity
+sea_lavender,Limonium axillare,Sea lavender,ground,False,0.1,96.02927682705966,14.416911219841042,salinity
+athel,Tamarix aphylla,Athel tamarisk,canopy,False,0.2,26.84618697684124,11.192822041084934,infrastructure
+glasswort,Arthrocnemum macrostachyum,Glasswort,ground,False,0.2,11.305445800150343,5.635200676277584,habitat
+qurm,Avicennia marina,Grey mangrove / Qurm,canopy,False,0.0,3.0659878922771133,3.0659878922771133,habitat
+suwwad,Suaeda vermiculata,Seablite / Suwwad,ground,False,0.2,96.84412711236428,0.8490921882983646,salinity
+ikrish,Aeluropus lagopoides,Ikrish / Mangrove grass,ground,False,0.2,96.86579581660251,0.47510640403840443,salinity
+sidr,Ziziphus spina-christi,Sidr / Christ's thorn,canopy,False,0.2,13.548022931374412,0.0,salinity
+samr,Vachellia tortilis,Umbrella thorn / Samr,canopy,False,0.1,71.07495499062361,0.0,salinity
 date_palm,Phoenix dactylifera,Date palm,canopy,False,0.5,0.0,0.0,drought
-ghada,Haloxylon persicum,White saxaul / Ghada,shrub,False,0.1,2.0507689714855903,0.0,habitat
-markh,Leptadenia pyrotechnica,Markh / Broom bush,shrub,False,0.1,76.64086931631225,0.0,salinity
+ghada,Haloxylon persicum,White saxaul / Ghada,shrub,False,0.1,1.9739922046167715,0.0,habitat
+markh,Leptadenia pyrotechnica,Markh / Broom bush,shrub,False,0.1,75.6606948431159,0.0,salinity
 sea_purslane,Sesuvium portulacastrum,Sea purslane,ground,False,0.2,0.0,0.0,drought
-dropseed,Sporobolus ioclados,Salt dropseed,ground,False,0.2,93.91457180232791,0.0,salinity
-ghardaq,Nitraria retusa,Ghardaq,shrub,False,0.1,92.70968484073502,0.0,salinity
-thammam,Pennisetum divisum,Thammam,ground,False,0.1,2.0507689714855903,0.0,habitat
-awsaj,Lycium shawii,Awsaj / Desert thorn,shrub,False,0.1,76.64086931631225,0.0,salinity
-thanda,Cyperus conglomeratus,Thanda sedge,ground,False,0.1,2.0507689714855903,0.0,habitat
+dropseed,Sporobolus ioclados,Salt dropseed,ground,False,0.2,94.04030378988313,0.0,salinity
+ghardaq,Nitraria retusa,Ghardaq,shrub,False,0.1,92.87340393942394,0.0,salinity
+thammam,Pennisetum divisum,Thammam,ground,False,0.1,1.9739922046167715,0.0,habitat
+awsaj,Lycium shawii,Awsaj / Desert thorn,shrub,False,0.1,75.6606948431159,0.0,salinity
+thanda,Cyperus conglomeratus,Thanda sedge,ground,False,0.1,1.9739922046167715,0.0,habitat
 conocarpus,Conocarpus lancifolius / erectus,Damas / Conocarpus (COMPARISON),canopy,True,0.8,0.0,0.0,infrastructure
 ficus,Ficus benjamina / microcarpa,Ficus (COMPARISON),canopy,True,0.8,0.0,0.0,salinity
 bermuda,Cynodon dactylon,Bermudagrass lawn (COMPARISON),ground,True,0.8,0.0,0.0,drought

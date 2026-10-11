@@ -110,7 +110,7 @@ def main():
         ], w=0.5)
         stat(fig, 0.62, 0.75, f"{hl['irrigated_greenery_ha']:,.0f} ha", "of irrigated greenery detected in our area of interest")
         stat(fig, 0.62, 0.50, f"{hl['land_km2']:,.0f} km²", "of land analysed at 20 m resolution")
-        stat(fig, 0.62, 0.25, f"{hl['n_native']} natives", f"scored against {hl['n_species'] - hl['n_native']} common urban plantings", ACCENT2)
+        stat(fig, 0.62, 0.25, f"{hl['n_native']} species", f"native or Gulf-adapted, scored against {hl['n_species'] - hl['n_native']} common urban plantings", ACCENT2)
         pdf.savefig(fig); plt.close(fig); n += 1
 
         # 3 Use case
@@ -137,7 +137,7 @@ def main():
             "they target yield, not low-input urban landscapes.", MUTED)
         bullets(fig, [
             "Ecoverse joins the three: a per-pixel fingerprint → a species GUILD that survives with minimal water → the water it saves.",
-            "Hyperspectral bridge: learns on open Tanager Gulf scenes which soil signals Sentinel-2 can and cannot see — a measured case for Satellite 813.",
+            "Hyperspectral over Bahrain: NASA EMIT measures saline gypsum soil directly, and shows what Sentinel-2 misses.",
             "Uncertainty-driven field loop: the map tells two students where one probe reading changes the most decisions, then updates itself.",
         ], y=0.40, w=0.9)
         pdf.savefig(fig); plt.close(fig); n += 1
@@ -149,7 +149,7 @@ def main():
             "Landsat 8/9 Collection 2 surface temperature (USGS): summer heat.",
             "Copernicus DEM GLO-30: elevation → shallow saline groundwater risk.",
             "ESA WorldCover 2021: land-cover context and an independent mangrove reference.",
-            "Planet Tanager open archive (426 bands): Abu Dhabi coastal sabkha, Riyadh and Rub al Khali desert, as Gulf analogues.",
+            f"NASA EMIT hyperspectral (285 bands, 60 m) over the same Bahrain AOI: {hl.get('hs_source') or 'not available'}.",
             "26-species trait table from FAO, ICBA, peer-reviewed salinity trials and Gulf floras (sources per row).",
         ], w=0.5, size=12)
         if tcv:
@@ -157,7 +157,7 @@ def main():
             fig.text(0.6, 0.78, "Hyperspectral signal recoverable from Sentinel-2\n(spatial-block cross-validation)",
                      fontsize=12, fontweight="bold", color=INK, va="top")
             fig.text(0.6, 0.68, "\n".join(lines), fontsize=12, color=INK2, va="top", linespacing=1.6, family="monospace")
-            msg = ("Gypsum signal transferred into Bahrain salinity layer." if hl.get("gypsum_transferred")
+            msg = ("EMIT gypsum (1750 nm) used directly in the Bahrain salinity layer." if hl.get("gypsum_transferred")
                    else "Gypsum signal NOT recoverable from Sentinel-2 → a measured gap for Satellite 813.")
             fig.text(0.6, 0.38, textwrap.fill(msg, 50), fontsize=12, color=ACCENT, va="top", fontweight="bold")
         if soil:
@@ -168,7 +168,7 @@ def main():
         # 6 Approach
         fig = new_slide("Approach", "Workflow", n + 1)
         steps = [("1 · Open data", "S2 summer/winter, Landsat LST, DEM, WorldCover, clipped to the AOI"),
-                 ("2 · Hyperspectral bridge", "Tanager Gulf scenes → which signals S2 can recover"),
+                 ("2 · Hyperspectral (EMIT)", "Gypsum, clay, carbonate, plant stress over Bahrain; what S2 can recover"),
                  ("3 · Fingerprint", "heat · salinity (ECe) · saline groundwater · moisture · survival evidence · urban density"),
                  ("4 · Survival model", "26 species × factor response curves → survival score"),
                  ("5 · Guild optimiser", "lowest water + upkeep, shade where hottest"),
@@ -217,15 +217,11 @@ def main():
         # 11 Hyperspectral
         if (RES / "12_hs_transfer_r2.png").exists():
             fig = new_slide("Hyperspectral: what Sentinel-2 cannot see", "Output 5", n + 1)
-            image(fig, "12_hs_transfer_r2.png", [0.03, 0.42, 0.48, 0.38])
-            image(fig, "11_hs_soil_spectra.png", [0.51, 0.42, 0.46, 0.38])
-            hs_imgs = sorted(RES.glob("10_hs_features_*.png"))
-            scenes_p = config.TANAGER_DIR / "scenes.json"
-            if hs_imgs and scenes_p.exists():   # show the scene with the most land
-                best = max(json.loads(scenes_p.read_text()), key=lambda m: m.get("land_pct", 0))["scene_id"]
-                hs_imgs = [p for p in hs_imgs if best in p.name] or hs_imgs
-            if hs_imgs:
-                image(fig, hs_imgs[0].name, [0.03, 0.05, 0.94, 0.33])
+            fig.text(0.05, 0.80, f"Same Bahrain AOI, {hl.get('hs_source') or 'NASA EMIT'}. The gypsum layer in the salinity map is measured by EMIT;\n"
+                     "bars show how much of each hyperspectral signal free Sentinel-2 can recover (the rest needs a hyperspectral sensor).", fontsize=10, color=INK2, va="top")
+            image(fig, "12_hs_transfer_r2.png", [0.03, 0.40, 0.48, 0.36])
+            image(fig, "11_hs_soil_spectra.png", [0.51, 0.40, 0.46, 0.36])
+            image(fig, "10_emit_features_bahrain.png", [0.03, 0.05, 0.94, 0.33])
             pdf.savefig(fig); plt.close(fig); n += 1
 
         # 12 Probe loop
@@ -240,7 +236,9 @@ def main():
         # 13 Validation & limitations
         fig = new_slide("Validation and limitations", "Honesty slide", n + 1)
         v = hl["validation"]
-        vl = [f"{k}: {val:.2f}" for k, val in v.items()]
+        notes = {"Conocarpus": " (follows from its low drought rating: a consistency check, not independent evidence)",
+                 "Spearman": " (weak at 20 m; LST is 100 m Landsat resampled)"}
+        vl = [f"{k}: {val:.2f}" + next((t for p_, t in notes.items() if k.startswith(p_)), "") for k, val in v.items()]
         fig.text(0.05, 0.78, "Checks we can run today", fontsize=13, fontweight="bold", color=INK, va="top")
         bullets(fig, vl + [f"Median Monte Carlo stability: {hl['median_stability']:.2f}"], y=0.72, w=0.42, size=11)
         fig.text(0.52, 0.78, "Limitations", fontsize=13, fontweight="bold", color=INK, va="top")
@@ -249,7 +247,7 @@ def main():
             "Several species tolerances are expert estimates; a Gulf horticulturist must review the table.",
             "pH and nutrients are invisible from orbit; a regional prior is used.",
             "20 m pixels mix roads, roofs and verges.",
-            "Hyperspectral calibration uses Gulf analogue scenes, not Bahrain.",
+            "Hyperspectral data is one EMIT date (June 2023) at 60 m; Sentinel-2 is 2025 at 20 m.",
             "Water savings assume established plants and WUCOLS plant factors.",
         ], x=0.52, y=0.72, w=0.43, size=11)
         pdf.savefig(fig); plt.close(fig); n += 1
@@ -258,11 +256,13 @@ def main():
         v_all = hl["validation"]
         fig = new_slide("Impact", "Why it matters", n + 1)
         if total_irr:
-            stat(fig, 0.05, 0.75, f"{total_irr['saving_pct']:.0f}%", "less irrigation water where natives replace high-water plantings")
-        stat(fig, 0.37, 0.75, f"{hl['n_native']}", "native species brought back into urban planting decisions", ACCENT2)
+            stat(fig, 0.05, 0.75, f"{total_irr['saving_pct']:.0f}%", "modelled irrigation saving where natives replace high-water plantings")
+        stat(fig, 0.37, 0.75, f"{hl['n_native']}", "native or Gulf-adapted species brought into urban planting decisions", ACCENT2)
         ck = next((k for k in v_all if k.startswith("Conocarpus")), None)
         if ck:
-            stat(fig, 0.69, 0.75, f"{100 - v_all[ck]:.0f}%", "of dense urban land where the model expects Conocarpus to need routine irrigation", "#eb6834")
+            pass
+        if urban:
+            stat(fig, 0.69, 0.75, f"{urban['saving_m3_yr']/1e6:.1f} M m³", "modelled water saved per year by converting this AOI's urban irrigated greenery", "#eb6834")
         bullets(fig, [
             "Water security: less desalinated / groundwater spent on ornamentals.",
             "Lower maintenance budgets: fewer replacements, less pruning and fertiliser.",
@@ -274,8 +274,8 @@ def main():
 
         # 15 Next steps
         fig = new_slide("Next steps for incubation", "Roadmap", n + 1)
-        box(fig, 0.05, 0.47, 0.28, 0.32, "Satellite 813 & Tanager", "Replace the Gulf-analogue bridge with hyperspectral scenes over Bahrain; "
-            "map gypsum, carbonate and plant stress directly.", ACCENT)
+        box(fig, 0.05, 0.47, 0.28, 0.32, "Satellite 813", "Repeat, higher-resolution hyperspectral coverage of Bahrain "
+            "to track soil salinity and plant stress over time, beyond a single EMIT date.", ACCENT)
         box(fig, 0.36, 0.47, 0.28, 0.32, "Field campaign", "50 probe sites + lab ECe on 10 samples to calibrate the salinity prior; "
             "survival audit of existing plantings.", ACCENT)
         box(fig, 0.67, 0.47, 0.28, 0.32, "Expert review", "Gulf horticulturists and nurseries validate the trait table and add "

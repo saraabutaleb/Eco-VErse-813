@@ -15,6 +15,7 @@ pystac-client==0.9.0
 planetary-computer==1.0.0
 odc-stac==0.5.3
 odc-geo==0.5.3
+earthaccess==0.19.0          # NASA EMIT download (needs EARTHDATA_USERNAME / EARTHDATA_PASSWORD)
 # notebooks
 jupyterlab==4.6.4
 ipykernel==7.4.0
