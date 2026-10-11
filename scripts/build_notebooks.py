@@ -39,7 +39,7 @@ def nb_main():
     c = []
     c.append(md(r'''
 # Ecoverse 813 — main analysis
-**Theme 05 · Sustainable Urban Planning & Smart Cities** · Arab Youth Space Hackathon: 813 Challenge
+**Team SpaceTubbies C-813 · Theme: Urban Expansion, Land Use Change & Heat Risk** · Arab Youth Space Hackathon: 813 Challenge
 
 **Problem statement.** *We want to **identify** the lowest-maintenance native plant combination that can survive each 20 m patch of
 **northern-central Bahrain** (Manama – Tubli Bay – Isa Town – Sitra) under **summer 2025** conditions, so that **municipal

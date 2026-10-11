@@ -93,7 +93,7 @@ def main():
         fig.text(0.06, 0.70, "Ecoverse 813", fontsize=54, fontweight="bold", color=INK)
         fig.text(0.06, 0.61, "Plant what the ground already wants.", fontsize=24, color=ACCENT)
         fig.text(0.06, 0.56, "Satellite environmental fingerprints that pick\nthe lowest-maintenance native plants able to\nsurvive each patch of urban Bahrain.", fontsize=15, color=INK2, linespacing=1.4, va="top")
-        fig.text(0.06, 0.32, f"{team['theme']}\nCountry: {team['country']}\nTeam: " +
+        fig.text(0.06, 0.32, f"{team['theme']}\nCountry: {team['country']}\nTeam {team['team_name']}: " +
                  ", ".join(m["name"] for m in team["members"]), fontsize=13, color=INK, linespacing=1.6, va="top")
         fig.text(0.06, 0.08, "Arab Youth Space Hackathon · 813 Challenge · Proof of Concept", fontsize=11, color=MUTED)
         image(fig, "05_recommendation.png", [0.60, 0.14, 0.37, 0.62])

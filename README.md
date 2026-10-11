@@ -1,7 +1,7 @@
 # Ecoverse 813 — plant what the ground already wants
 
-**Team:** Ecoverse 813 (see [Team](#10-team-licence-and-attribution)) · **Country:** Kingdom of Bahrain ·
-**Theme 05 — Sustainable Urban Planning & Smart Cities** · Arab Youth Space Hackathon: 813 Challenge (Proof of Concept)
+**Team:** SpaceTubbies C-813 (see [Team](#10-team-licence-and-attribution)) · **Project:** Ecoverse 813 · **Country:** Bahrain ·
+**Theme: Urban Expansion, Land Use Change & Heat Risk** · Arab Youth Space Hackathon: 813 Challenge (Proof of Concept)
 
 **One line:** Ecoverse builds a satellite *environmental fingerprint* (heat, salinity, saline groundwater, moisture,
 survival evidence, urban density) for every 20 m patch of northern-central Bahrain and recommends the
