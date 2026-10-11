@@ -1,0 +1,12 @@
+# large or temporary data - never commit full scenes
+data/cache/
+*.h5
+*.hdf5
+*.part
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.pytest_cache/
+.env
+*.zip

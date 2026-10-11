@@ -1,0 +1,2 @@
+site_id,date,lat,lon,row,col,ec_1to5_dSm,texture,ece_dSm,ph,moisture_vwc_pct,n_mg_kg,p_mg_kg,k_mg_kg,surface_temp_c,photo_file,notes
+P01,2026-10-15,26.1800,50.5600,,,0.95,sandy_loam,,8.2,6.5,,,,52.0,P01.jpg,"EXAMPLE ROW - delete. Leave ece_dSm empty to convert ec_1to5 via texture factor; row/col are filled by the notebook from lat/lon"
