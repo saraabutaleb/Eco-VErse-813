@@ -205,7 +205,7 @@ More: [`docs/concept_review.md`](docs/concept_review.md) — idea refinement, we
 ## 10. Team, licence and attribution
 | Member | Role |
 |---|---|
-   | Enam Abutaleb ([@EnamAbutaleb](https://github.com/EnamAbutaleb)) | Team leader |
+| Enam Abutaleb ([@EnamAbutaleb](https://github.com/EnamAbutaleb)) | Team leader |
 | Sara Abutaleb | Participant |
 
 - **Code:** MIT licence (see `LICENSE`).
